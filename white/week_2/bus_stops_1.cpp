@@ -40,26 +40,85 @@ Bus 950: Kokoshkino Marushkino Vnukovo Peredelkino Solntsevo Troparyovo
 
 */
 
-
 void PrintMap(const map<string, vector<string>>& m, const string& name) {
-    for (const auto& item : m) {
+    for (const auto& item : m)
+    {
         cout << name << item.first << ": ";
-        for (const auto& i : item.second) {
+        for (const auto& i : item.second)
+        {
             cout << i << ' ';
         }
         cout << endl;
-    }  
+    }
 }
 
-void ModifyStops(const map<string, vector<string>>& bus_stops, map<string, vector<string>>& stop_buses) {
-    for (const auto& item : bus_stops) {
-        for (const auto& stop : item.second) {
-            stop_buses[stop].push_back(item.first);
+void AddingBusAndStop(map<string, vector<string>>& bus_stops, map<string, vector<string>>& stop_buses, string bus, int stop_count) {
+    for (int k = 0; k < stop_count; ++k)
+    {
+        string stop;
+        cin >> stop;
+        bus_stops[bus].push_back(stop);
+        stop_buses[stop].push_back(bus);
+    }
+}
+
+void PrintBusesForStop(map<string, vector<string>>& stop_buses, string stop) {
+    if (stop_buses.count(stop) == 0)
+    {
+        cout << "No stop" << endl;
+    }
+    else
+    {
+        for (const auto& bus : stop_buses[stop])
+        {
+            cout << bus << " ";
+        }
+        cout << endl;
+    }
+}
+
+void PrintStopsForBus(map<string, vector<string>>& bus_stops, map<string, vector<string>>& stop_buses, string bus) {
+    if (bus_stops.count(bus) == 0)
+    {
+        cout << "No bus" << endl;
+    }
+    else
+    {
+        for (const auto &stop : bus_stops[bus])
+        {
+            if (stop_buses[stop].size() == 1)
+            {
+                cout << "Stop " << stop << ": no interchange" << endl;
+            }
+            else
+            {
+                cout << "Stop " << stop << ": ";
+                for (const auto &b : stop_buses[stop])
+                {
+                    if (b != bus)
+                    {
+                        cout << b << " ";
+                    }
+                }
+                cout << endl;
+            }
         }
     }
 }
 
-int main() {
+void PrintAllBuses(const map<string, vector<string>>& bus_stops) {
+    if (bus_stops.empty())
+    {
+        cout << "No buses" << endl;
+    }
+    else
+    {
+        PrintMap(bus_stops, "Bus ");
+    }
+}
+
+int main()
+{
     map<string, vector<string>> bus_stops;
     map<string, vector<string>> stop_buses;
 
@@ -71,69 +130,27 @@ int main() {
         cin >> operation;
         if (operation == "NEW_BUS")
         {
-            string bus; 
+            string bus;
             int stop_count;
             cin >> bus >> stop_count;
-            for (int k = 0; k < stop_count; ++k)
-            {
-                string stop;
-                cin >> stop;
-                bus_stops[bus].push_back(stop);
-                stop_buses[stop].push_back(bus);
-            }
-            //ModifyStops(bus_stops, stop_buses);
-            /*PrintMap(stop_buses, "Stop ");
-            cout << endl;
-            PrintMap(bus_stops, "Bus ");*/
-        } else if (operation == "BUSES_FOR_STOP")
+            AddingBusAndStop(bus_stops, stop_buses, bus, stop_count);
+        }
+        else if (operation == "BUSES_FOR_STOP")
         {
             string stop;
             cin >> stop;
-            if (stop_buses.count(stop) == 0) 
-            {
-                cout << "No stop" << endl;
-            } else
-            {
-                //cout << "Stop " << stop << ": ";
-                for (const auto& bus : stop_buses[stop]) {
-                    cout << bus << " ";
-                }
-                cout << endl;
-            }
-        } else if (operation == "STOPS_FOR_BUS")
+            PrintBusesForStop(stop_buses, stop);
+        }
+        else if (operation == "STOPS_FOR_BUS")
         {
             string bus;
             cin >> bus;
-            if (bus_stops.count(bus) == 0) 
-            {
-                cout << "No bus" << endl;
-            } else
-            {
-                for (const auto& stop : bus_stops[bus]) {
-                    if (stop_buses[stop].size() == 1) {
-                        cout << "Stop " << stop << ": no interchange" << endl;
-                    } else
-                    {
-                        cout << "Stop "<< stop << ": ";
-                        for (const auto& b : stop_buses[stop]) {    
-                            if (b != bus) {
-                                cout << b << " ";
-                            }
-                        }
-                        cout << endl;
-                    }
-                    
-                }
-            }
-        } else if (operation == "ALL_BUSES")
+            PrintStopsForBus(bus_stops, stop_buses, bus);
+        }
+        else if (operation == "ALL_BUSES")
         {
-            if (bus_stops.empty()) {
-                cout << "No buses" << endl;
-            } else
-            {
-                PrintMap(bus_stops, "Bus ");
-            }
-        }  
+            PrintAllBuses(bus_stops);
+        }
     }
     return 0;
 }
