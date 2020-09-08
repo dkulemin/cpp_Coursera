@@ -13,7 +13,6 @@ void UpdateAndPrintMap(map<vector<string>, int>& stops_to_bus, const vector<stri
     } else
     {
         cout << "Already exists for " << stops_to_bus[stops] << endl;
-        return; 
     }
 }
 
